@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include <sys/utsname.h>
 
 #ifdef __OpenBSD__
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
 #else
-	#include <sys/utsname.h>
 	#include <sys/sysinfo.h>
 #endif
 
@@ -58,7 +58,7 @@ void fetch(GtkWidget *label) {
 		exit(EXIT_FAILURE);
 	}
 
-	print("%llu", (unsigned long long)physmem);
+	printf("%llu", (unsigned long long)totalram);
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
@@ -95,7 +95,6 @@ void fetch(GtkWidget *label) {
 }
 
 int main(int argc, char *argv[]) {
-
 	GtkWidget *window, *grid;
 	gtk_init(&argc, &argv);
 	//gtk_init();
