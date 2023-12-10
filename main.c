@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 
-#ifdef __OPENBSD__
+#ifdef __OpenBSD__
 #else
 	#include <sys/utsname.h>
 	#include <sys/sysinfo.h>
