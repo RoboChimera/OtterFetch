@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
-#include <sys/utsname.h>
-#include <sys/sysinfo.h>
 
 #ifdef __OPENBSD__
 #else
