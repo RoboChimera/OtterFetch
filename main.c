@@ -3,6 +3,8 @@
 #include <gtk/gtk.h>
 
 #ifdef __OpenBSD__
+	#include <sys/types.h>
+	#include <sys/sysctl.h>
 #else
 	#include <sys/utsname.h>
 	#include <sys/sysinfo.h>
@@ -42,6 +44,21 @@ void fetch(GtkWidget *label) {
 	uname(&unamePointer);
 
 #ifdef __OpenBSD__
+	int mib[2];
+	size_t len;
+	uint64_t totalram;
+
+	mib[0] = CTL_HW;
+	mib[1] = HW_PHYSMEM64;
+
+	len = sizeof(totalram);
+
+	if (sysctl(mib, 2, &totalram, &len, NULL, 0) == -1) {
+		perror("sysctl");
+		exit(EXIT_FAILURE);
+	}
+
+	print("%llu", (unsigned long long)physmem);
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
@@ -65,7 +82,6 @@ void fetch(GtkWidget *label) {
 	sprintf(totalram, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0);
 	sprintf(freeram, "Available memory: %.1f MB\n", sInfo.freeram / 1000.0 / 1000.0);
 
-#endif
 
 	// Update the GTK label
 	char *displayText = g_strdup_printf("%s%sVirt Memory: Off\n%s", version, totalram, freeram);
@@ -75,6 +91,7 @@ void fetch(GtkWidget *label) {
 	free(totalram);
 	free(freeram);
 	g_free(displayText);
+#endif
 }
 
 int main(int argc, char *argv[]) {
