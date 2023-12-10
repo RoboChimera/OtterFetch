@@ -10,35 +10,6 @@
 	#include <sys/sysinfo.h>
 #endif
 
-/*
-char* execute(const char *command) {
-    FILE* bin = popen(command, "r");
-
-    int charLength = 0;
-    char* commandBuffer;
-
-    int bufferSize = 4;
-    commandBuffer = (char*)malloc(bufferSize * sizeof(char));
-
-    char commandCBuffer;
-    while ((commandCBuffer = fgetc(bin)) != EOF) {
-        if (charLength == bufferSize - 1) {
-            bufferSize *= 2;
-            commandBuffer = (char*)realloc(commandBuffer, bufferSize * sizeof(char));
-        }
-        commandBuffer[charLength++] = commandCBuffer;
-    }
-
-    // Null-terminate the string
-    commandBuffer[charLength] = '\0';
-
-    // Clean up
-    pclose(bin);
-
-    return commandBuffer;
-}
-*/
-
 void fetch(GtkWidget *label) {
 	struct utsname unamePointer;
 	uname(&unamePointer);
@@ -117,7 +88,6 @@ void fetch(GtkWidget *label) {
 int main(int argc, char *argv[]) {
 	GtkWidget *window, *grid;
 	gtk_init(&argc, &argv);
-	//gtk_init();
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), "OtterFetch");
