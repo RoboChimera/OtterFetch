@@ -44,23 +44,38 @@ void fetch(GtkWidget *label) {
 	uname(&unamePointer);
 
 #ifdef __OpenBSD__
-	int mib[2];
-	size_t len;
+	int totalram_mib[2];
+	size_t totalmem_len;
 	uint64_t totalramUint;
 
-	mib[0] = CTL_HW;
-	mib[1] = HW_PHYSMEM64;
+	totalram_mib[0] = CTL_HW;
+	totalram_mib[1] = HW_PHYSMEM64;
 
-	len = sizeof(totalramUint);
+	totalmem_len = sizeof(totalramUint);
 
-	if (sysctl(mib, 2, &totalramUint, &len, NULL, 0) == -1) {
+	if (sysctl(totalram_mib, 2, &totalramUint, &totalram_len, NULL, 0) == -1) {
+		perror("sysctl");
+		exit(EXIT_FAILURE);
+	}
+
+	int freeram_mib[2];
+	size_t freeram_len;
+	uint64_t freeramUint;
+
+	freeram_mib[0] = CTL_HW;
+	freeram_mib[1] = HW_USERMEM64;
+	freeram_len = sizeof(freeramUint);
+
+	if (sysctl(freeram_mib, 2, &freeramUint, &freeram_len, NULL, 0) == -1) {
 		perror("sysctl");
 		exit(EXIT_FAILURE);
 	}
 
 	float totalram = totalramUint / 1024 / 1024;
+	float totalram = freeramUint / 1024 / 1024;
 	printf("Version: %s %s\n", unamePointer.sysname, unamePointer.release);
 	printf("Built-in memory: %.1f M", totalram);
+	printf("Available memory: %.1f M", freeram);
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
