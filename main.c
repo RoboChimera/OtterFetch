@@ -45,13 +45,13 @@ void fetch(GtkWidget *label) {
 
 #ifdef __OpenBSD__
 	int totalram_mib[2];
-	size_t totalmem_len;
+	size_t totalram_len;
 	uint64_t totalramUint;
 
 	totalram_mib[0] = CTL_HW;
 	totalram_mib[1] = HW_PHYSMEM64;
 
-	totalmem_len = sizeof(totalramUint);
+	totalram_len = sizeof(totalramUint);
 
 	if (sysctl(totalram_mib, 2, &totalramUint, &totalram_len, NULL, 0) == -1) {
 		perror("sysctl");
@@ -72,7 +72,7 @@ void fetch(GtkWidget *label) {
 	}
 
 	float totalram = totalramUint / 1024 / 1024;
-	float totalram = freeramUint / 1024 / 1024;
+	float freeram = freeramUint / 1024 / 1024;
 	printf("Version: %s %s\n", unamePointer.sysname, unamePointer.release);
 	printf("Built-in memory: %.1f M", totalram);
 	printf("Available memory: %.1f M", freeram);
