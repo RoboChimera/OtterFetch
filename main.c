@@ -77,35 +77,15 @@ void fetch(GtkWidget *label) {
 	int versionCSize = snprintf(NULL, 0, "Version: %s %s\n", unamePointer.sysname, unamePointer.release) + 1;
 	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", totalramValue) + 1;
 	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", freeramValue) + 1;
-
-	char *version = (char *)malloc(versionCSize);
-	char *totalram = (char *)malloc(totalramCSize);
-	char *freeram = (char *)malloc(freeramCSize);
-
-	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
-	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
-	sprintf(freeram, "Available memory: %.1f MB\n", freeramValue);
-
-	char *displayText = g_strdup_printf("%s%sVirt Memory: Off\n%s", version, totalram, freeram);
-	gtk_label_set_text(GTK_LABEL(label), displayText);
-
-	free(version);
-	free(totalram);
-	free(freeram);
-	g_free(displayText);
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
-#endif
 
-
-#ifdef __OpenBSD__
-#else
 	//Calculate the size needed for the strings
 	int versionCSize = snprintf(NULL, 0, "Version: %s %s\n", unamePointer.sysname, unamePointer.release) + 1;
 	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0) + 1;
 	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", sInfo.freeram / 1000.0 / 1000.0) + 1;
-
+#endif
 	// Allocate memory for the strings
 	char *version = (char *)malloc(versionCSize);
 	char *totalram = (char *)malloc(totalramCSize);
@@ -125,7 +105,6 @@ void fetch(GtkWidget *label) {
 	free(totalram);
 	free(freeram);
 	g_free(displayText);
-#endif
 }
 
 int main(int argc, char *argv[]) {
