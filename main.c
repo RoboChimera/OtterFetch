@@ -4,12 +4,54 @@
 #include <sys/utsname.h>
 #include <sys/sysinfo.h>
 
+#ifdef __OPENBSD__
+#else
+	#include <sys/utsname.h>
+	#include <sys/sysinfo.h>
+#endif
+
+/*
+char* execute(const char *command) {
+    FILE* bin = popen(command, "r");
+
+    int charLength = 0;
+    char* commandBuffer;
+
+    int bufferSize = 4;
+    commandBuffer = (char*)malloc(bufferSize * sizeof(char));
+
+    char commandCBuffer;
+    while ((commandCBuffer = fgetc(bin)) != EOF) {
+        if (charLength == bufferSize - 1) {
+            bufferSize *= 2;
+            commandBuffer = (char*)realloc(commandBuffer, bufferSize * sizeof(char));
+        }
+        commandBuffer[charLength++] = commandCBuffer;
+    }
+
+    // Null-terminate the string
+    commandBuffer[charLength] = '\0';
+
+    // Clean up
+    pclose(bin);
+
+    return commandBuffer;
+}
+*/
+
 void fetch(GtkWidget *label) {
 	struct utsname unamePointer;
-	struct sysinfo sInfo;
 	uname(&unamePointer);
-	sysinfo(&sInfo);
 
+#ifdef __OpenBSD__
+#else
+	struct sysinfo sInfo;
+	sysinfo(&sInfo);
+#endif
+
+
+#ifdef __OpenBSD__
+#else
 	//Calculate the size needed for the strings
 	int versionCSize = snprintf(NULL, 0, "Version: %s %s\n", unamePointer.sysname, unamePointer.release) + 1;
 	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0) + 1;
@@ -19,12 +61,13 @@ void fetch(GtkWidget *label) {
 	char *version = (char *)malloc(versionCSize);
 	char *totalram = (char *)malloc(totalramCSize);
 	char *freeram = (char *)malloc(freeramCSize);
-	//char *version = (char *)malloc(versionCSize);
 
 	// Concatenate the string
 	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
 	sprintf(totalram, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0);
 	sprintf(freeram, "Available memory: %.1f MB\n", sInfo.freeram / 1000.0 / 1000.0);
+
+#endif
 
 	// Update the GTK label
 	char *displayText = g_strdup_printf("%s%sVirt Memory: Off\n%s", version, totalram, freeram);
