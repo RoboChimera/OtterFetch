@@ -91,10 +91,17 @@ void fetch(GtkWidget *label) {
 	char *totalram = (char *)malloc(totalramCSize);
 	char *freeram = (char *)malloc(freeramCSize);
 
+#ifdef __OpenBSD__
 	// Concatenate the string
+	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
+	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
+	sprintf(freeram, "Available memory: %.1f MB\n", freeramValue);
+
+#else
 	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
 	sprintf(totalram, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0);
 	sprintf(freeram, "Available memory: %.1f MB\n", sInfo.freeram / 1000.0 / 1000.0);
+#endif
 
 
 	// Update the GTK label
