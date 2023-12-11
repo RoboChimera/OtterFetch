@@ -106,7 +106,7 @@ void fetch(GtkWidget *label) {
 }
 
 int main(int argc, char *argv[]) {
-	GtkWidget *window, *grid, *label, *image;
+	GtkWidget *window, *grid, *label, *watermark, *image;
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -128,9 +128,13 @@ int main(int argc, char *argv[]) {
 	fetch(label);
 	gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
 
+	watermark = gtk_label_new("Made by RoboChimera, A True Otter(TM)");
+	gtk_widget_set_halign(GTK_WIDGET(watermark), GTK_ALIGN_END);
+
 	// Attaching the GtkWidgets
 	gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), watermark, 0, 2, 1, 1);
 
 	gtk_widget_show_all(window);
 	gtk_main();
