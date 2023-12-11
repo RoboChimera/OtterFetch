@@ -36,7 +36,11 @@ void fetch(GtkWidget *label) {
 
 	// Get the physical RAM size
 	totalram_mib[0] = CTL_HW;
+#ifdef __OpenBSD__
 	totalram_mib[1] = HW_PHYSMEM64;
+#else
+	totalram_mib[1] = HW_PHYSMEM;
+#endif
 
 	totalram_len = sizeof(totalramUint);
 	if (sysctl(totalram_mib, 2, &totalramUint, &totalram_len, NULL, 0) == -1) {
@@ -50,7 +54,12 @@ void fetch(GtkWidget *label) {
 
 	// Get free RAM size
 	freeram_mib[0] = CTL_HW;
+#ifdef __OpenBSD__
 	freeram_mib[1] = HW_USERMEM64;
+#else
+	freeram_mib[1] = HW_USERMEM;
+#endif
+
 
 	freeram_len = sizeof(freeramUint);
 	if (sysctl(freeram_mib, 2, &freeramUint, &freeram_len, NULL, 0) == -1) {
