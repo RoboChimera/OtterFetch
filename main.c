@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include <sys/utsname.h>
 
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined_(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
 #else
@@ -14,7 +14,7 @@ void fetch(GtkWidget *label) {
 	struct utsname unamePointer;
 	uname(&unamePointer);
 
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined_(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
 	int totalram_mib[2];
 	size_t totalram_len;
 	uint64_t totalramUint;
@@ -54,7 +54,7 @@ void fetch(GtkWidget *label) {
 	char *totalram = (char *)malloc(totalramCSize);
 	char *freeram = (char *)malloc(freeramCSize);
 
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined_(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
 	// Concatenate the string
 	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
 	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
