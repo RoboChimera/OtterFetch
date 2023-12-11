@@ -10,6 +10,21 @@
 	#include <sys/sysinfo.h>
 #endif
 
+void setImage(GtkWidget *image, GtkWidget *grid) {
+	const char *homeDir = getenv("HOME");
+
+	if (homeDir != NULL) {
+		int dirCSize = snprintf(NULL, 0, "%s/.config/otterfetch/banner.png", homeDir) + 1;
+		char *dir = (char *)malloc(dirCSize);
+		sprintf(dir, "%s/.config/otterfetch/banner.png", homeDir);
+
+		image = gtk_image_new_from_file(dir);
+		gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 1, 1);
+	} else {
+		return 1;
+	}
+}
+
 void fetch(GtkWidget *label) {
 	struct utsname unamePointer;
 	uname(&unamePointer);
@@ -53,10 +68,13 @@ void fetch(GtkWidget *label) {
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
 
+	float totalramValue = sInfo.totalram / 1000 / 1000;
+	float freeramValue = sInfo.freeram / 1000 / 1000;
+
 	//Calculate the size needed for the strings
 	int versionCSize = snprintf(NULL, 0, "Version: %s %s\n", unamePointer.sysname, unamePointer.release) + 1;
-	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0) + 1;
-	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", sInfo.freeram / 1000.0 / 1000.0) + 1;
+	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", totalramValue) + 1;
+	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", freeramValue) + 1;
 #endif
 	// Allocate memory for the strings
 	char *version = (char *)malloc(versionCSize);
@@ -71,13 +89,11 @@ void fetch(GtkWidget *label) {
 
 #else
 	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
-	sprintf(totalram, "Built-in memory: %.1f MB\n", sInfo.totalram / 1000.0 / 1000.0);
-	sprintf(freeram, "Available memory: %.1f MB\n", sInfo.freeram / 1000.0 / 1000.0);
+	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
+	sprintf(freeram, "Available memory: %.1f MB\n", freeramValue);
 #endif
-
-
 	// Update the GTK label
-	char *displayText = g_strdup_printf("%s%sVirt Memory: Off\n%s", version, totalram, freeram);
+	char *displayText = g_strdup_printf("%s%s%s", version, totalram, freeram);
 	gtk_label_set_text(GTK_LABEL(label), displayText);
 
 	free(version);
@@ -87,12 +103,12 @@ void fetch(GtkWidget *label) {
 }
 
 int main(int argc, char *argv[]) {
-	GtkWidget *window, *grid;
+	GtkWidget *window, *grid, *label, *image;
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), "OtterFetch");
-	gtk_window_set_default_size(GTK_WINDOW(window), 500, 250);
+	//gtk_window_set_default_size(GTK_WINDOW(window), 500, 250);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -100,12 +116,20 @@ int main(int argc, char *argv[]) {
 	// Making the grid
 	grid = gtk_grid_new();
 	gtk_container_add(GTK_CONTAINER(window), grid);
+	
+	// Image
+	image = gtk_image_new_from_file("");
+	setImage(image, grid);
+	//image = gtk_image_new_from_file(("%sbanner.png", homeDir));
 
-	// Making the labels
-	GtkWidget *label = gtk_label_new("");
+	// Label
+	label = gtk_label_new("");
 	fetch(label);
-	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-	gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+	gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
+
+	// Attaching the GtkWidgets
+	gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
 
 	gtk_widget_show_all(window);
 	gtk_main();
