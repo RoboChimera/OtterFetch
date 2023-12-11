@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include <sys/utsname.h>
 
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined_(__FreeBSD__)
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
 #else
@@ -14,33 +14,25 @@ void fetch(GtkWidget *label) {
 	struct utsname unamePointer;
 	uname(&unamePointer);
 
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined_(__FreeBSD__)
 	int totalram_mib[2];
 	size_t totalram_len;
 	uint64_t totalramUint;
 
+	// Get the physical RAM size
 	totalram_mib[0] = CTL_HW;
 	totalram_mib[1] = HW_PHYSMEM64;
 
 	totalram_len = sizeof(totalramUint);
 
-	if (sysctl(totalram_mib, 2, &totalramUint, &totalram_len, NULL, 0) == -1) {
-		perror("sysctl");
-		exit(EXIT_FAILURE);
-	}
-
 	int freeram_mib[2];
 	size_t freeram_len;
 	uint64_t freeramUint;
 
+	// Get free RAM size
 	freeram_mib[0] = CTL_HW;
 	freeram_mib[1] = HW_USERMEM64;
 	freeram_len = sizeof(freeramUint);
-
-	if (sysctl(freeram_mib, 2, &freeramUint, &freeram_len, NULL, 0) == -1) {
-		perror("sysctl");
-		exit(EXIT_FAILURE);
-	}
 
 	float totalramValue = totalramUint / 1000 / 1000;
 	float freeramValue = freeramUint / 1000 / 1000;
@@ -62,7 +54,7 @@ void fetch(GtkWidget *label) {
 	char *totalram = (char *)malloc(totalramCSize);
 	char *freeram = (char *)malloc(freeramCSize);
 
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined_(__FreeBSD__)
 	// Concatenate the string
 	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
 	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
