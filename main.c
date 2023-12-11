@@ -21,7 +21,7 @@ void setImage(GtkWidget *image, GtkWidget *grid) {
 		image = gtk_image_new_from_file(dir);
 		gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 1, 1);
 	} else {
-		return 1;
+		return;
 	}
 }
 
