@@ -24,6 +24,10 @@ void fetch(GtkWidget *label) {
 	totalram_mib[1] = HW_PHYSMEM64;
 
 	totalram_len = sizeof(totalramUint);
+	if (sysctl(totalram_mib, 2, &totalramUint, &totalram_len, NULL, 0) == -1) {
+		perror("sysctl");
+		exit(EXIT_FAILURE);
+	}
 
 	int freeram_mib[2];
 	size_t freeram_len;
@@ -32,7 +36,12 @@ void fetch(GtkWidget *label) {
 	// Get free RAM size
 	freeram_mib[0] = CTL_HW;
 	freeram_mib[1] = HW_USERMEM64;
+
 	freeram_len = sizeof(freeramUint);
+	if (sysctl(freeram_mib, 2, &freeramUint, &freeram_len, NULL, 0) == -1) {
+		perror("sysctl");
+		exit(EXIT_FAILURE);
+	}
 
 	float totalramValue = totalramUint / 1000 / 1000;
 	float freeramValue = freeramUint / 1000 / 1000;
