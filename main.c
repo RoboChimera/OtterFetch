@@ -21,6 +21,7 @@ void setImage(GtkWidget *image, GtkWidget *grid) {
 		image = gtk_image_new_from_file(dir);
 		gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 1, 1);
 	} else {
+		printf("No home directory found");
 		return;
 	}
 }
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]) {
 	setImage(image, grid);
 
 	// Label
-	label = gtk_label_new("");
+	label = gtk_label_new(NULL);
 	fetch(label);
 	gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
 
