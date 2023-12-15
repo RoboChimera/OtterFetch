@@ -6,7 +6,7 @@
 	#include <sys/sysinfo.h>
 #endif
 
-int fetchTotalram(void) {
+char* fetchTotalram(void) {
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
 	int totalram_mib[2];
 	size_t totalramLen;
@@ -33,10 +33,14 @@ int fetchTotalram(void) {
 
 	float totalramValue = sInfo.totalram / 1000 / 1000;
 #endif
-	return totalramValue;
+	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", totalramValue) + 1;
+	char *totalram = (char *)malloc(totalramCSize);
+	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
+
+	return totalram;
 }
 
-int fetchFreeram(void) {
+char* fetchFreeram(void) {
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
 	int freeram_mib[2];
 	size_t freeram_len;
@@ -65,32 +69,30 @@ int fetchFreeram(void) {
 
 	float freeramValue = sInfo.freeram / 1000 / 1000;
 #endif
-	return freeramValue;
+
+	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", freeramValue) + 1;
+	char *freeram = (char *)malloc(freeramCSize);
+	sprintf(freeram, "Available memory: %.1f MB\n", freeramValue);
+
+	return freeram;
 }
 
-int fetchUname(void) {
+char* fetchUname(void) {
 	// For another day :3
+	struct utsname unamePointer;
+	uname(&unamePointer);
+
+	int versionCSize = snprintf(NULL, 0, "Version: %s %s\n", unamePointer.sysname, unamePointer.release) + 1;
+	char *version = (char *)malloc(versionCSize);
+	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
+
+	return version;
 }
 
 void fetch(GtkWidget *label) {
-	struct utsname unamePointer;
-	uname(&unamePointer);
-	float totalramValue = fetchTotalram();
-	float freeramValue = fetchFreeram();
-
-	int versionCSize = snprintf(NULL, 0, "Version: %s %s\n", unamePointer.sysname, unamePointer.release) + 1;
-	int totalramCSize = snprintf(NULL, 0, "Built-in memory: %.1f MB\n", totalramValue) + 1;
-	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", freeramValue) + 1;
-
-	// Allocate memory for the strings
-	char *version = (char *)malloc(versionCSize);
-	char *totalram = (char *)malloc(totalramCSize);
-	char *freeram = (char *)malloc(freeramCSize);
-
-	// Concatenate the string
-	sprintf(version, "Version: %s %s\n", unamePointer.sysname, unamePointer.release);
-	sprintf(totalram, "Built-in memory: %.1f MB\n", totalramValue);
-	sprintf(freeram, "Available memory: %.1f MB\n", freeramValue);
+	char *totalram = fetchTotalram();
+	char *freeram = fetchFreeram();
+	char *version = fetchUname();
 
 	// Update the GTK label
 	char *displayText = g_strdup_printf("%s%s%s", version, totalram, freeram);
