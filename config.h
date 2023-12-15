@@ -7,7 +7,7 @@
  * freeram		free memory in GB	fetchFreeram()		components/fetchUname.h
 */
 
-// Include only libraries we need
+// Include only needed libraries
 #include "components/fetchTotalRam.h"
 #include "components/fetchFreeRam.h"
 #include "components/fetchUname.h"
