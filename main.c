@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 
-#include "fetch.h"
+#include "config.h"
 
 void setImage(GtkWidget *image, GtkWidget *grid) {
 	const char *homeDir = getenv("HOME");
