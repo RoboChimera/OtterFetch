@@ -7,15 +7,18 @@
 
 char* fetchCPU(void) {
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
-	int cpu_mib[2];
-	size_t cpuLen;
+	int cpuname_mib[2];
+	size_t cpunameLen;
 	char *cpuChar;
 
 	// Get CPU
 	cpu_mib[0] = CTL_HW;
 	cpu_mib[1] = HW_MODEL;
 
-	cpuLen = sizeof(cpuChar);
+	if (sysctl(cpuname_mib, 2, NULL, &cpunameLen, NULL, 0) == -1) {
+		return NULL;
+	}
+	cpuChar = (char *)malloc(cpuLen);
 
 	int cpuCSize = snprintf(NULL, 0, "CPU: %s\n", cpuChar) + 1;
 	char *cpuName = (char *)malloc(cpuCSize);
