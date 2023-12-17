@@ -11,15 +11,15 @@ char* fetchCPU(void) {
 	size_t cpuLen;
 	char *cpuChar;
 
-	// Get free RAM size
-	freeram_mib[0] = CTL_HW;
-	freeram_mib[1] = HW_MODEL;
+	// Get CPU
+	cpu_mib[0] = CTL_HW;
+	fcpu_mib[1] = HW_MODEL;
 
 	cpuLen = sizeof(cpuChar);
 
 	int cpuCSize = snprintf(NULL, 0, "CPU: %s\n", cpuChar) + 1;
-	char *cpuChar = (char *)malloc(freeramCSize);
-	sprintf(cpuChar, "CPU: %s\n", cpuChar);
-	return cpuChar;
+	char *cpuName = (char *)malloc(freeramCSize);
+	sprintf(cpuName, "CPU: %s\n", cpuChar);
+	return cpuName;
 #endif
 }
