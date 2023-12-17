@@ -13,12 +13,12 @@ char* fetchCPU(void) {
 
 	// Get CPU
 	cpu_mib[0] = CTL_HW;
-	fcpu_mib[1] = HW_MODEL;
+	cpu_mib[1] = HW_MODEL;
 
 	cpuLen = sizeof(cpuChar);
 
 	int cpuCSize = snprintf(NULL, 0, "CPU: %s\n", cpuChar) + 1;
-	char *cpuName = (char *)malloc(freeramCSize);
+	char *cpuName = (char *)malloc(cpuCSize);
 	sprintf(cpuName, "CPU: %s\n", cpuChar);
 	return cpuName;
 #endif
