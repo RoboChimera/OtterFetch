@@ -12,7 +12,11 @@ char* fetchCpuThreads(void) {
 	int ncpu;
 
 	cpuThreads_mib[0] = CTL_HW;
+#ifdef __OpenBSD__
 	cpuThreads_mib[1] = HW_NCPUFOUND;
+#else
+	cpuThreads_mib[1] = HW_NCPU;
+#endif
 
 	cpuThreads_len = sizeof(ncpu);
 
