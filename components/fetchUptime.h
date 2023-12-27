@@ -20,12 +20,13 @@ char* fetchUptime(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	int second = (int)sinceBootTime.tv_sec;
+	long long second = (long long)sinceBootTime.tv_sec;
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
 
 	int second = sInfo.uptime;
+#endif
 	int hour = 0, minute = 0;
 	
 	while (second >= 3600) {
@@ -37,8 +38,6 @@ char* fetchUptime(void) {
 		second = second - 60;
 		minute++;
 	}
-
-#endif
 
 	int uptimeCSize = snprintf(NULL, 0, "Uptime: %dh %dm %ds\n", hour, minute, second + 1);
 	char *uptime = (char *)malloc(uptimeCSize);
