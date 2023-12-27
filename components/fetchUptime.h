@@ -7,6 +7,20 @@
 
 char* fetchUptime(void) {
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
+	int uptime_mib[2];
+	size_t uptime_len;
+	struct timeval sinceBootTime;
+
+	uptime_mib[0] = CTL_KERN;
+	uptime_mib[1] = KERN_BOOTTIME;
+
+	uptime_len = sizeof(sinceBootTime);
+	if (sysctl(uptime_mib, 2, &sinceBootTime, &uptime_len, NULL, 0) == -1) {
+		perror("SYSCTL");
+		exit(EXIT_FAILURE);
+	}
+
+	int second = (int)sinceBootTime.tv_sec;
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
