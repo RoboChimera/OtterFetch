@@ -20,7 +20,7 @@ char* fetchUptime(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	long long second = (long long)sinceBootTime.tv_sec;
+	int second = time(NULL) - sinceBootTime.tv_sec;
 #else
 	struct sysinfo sInfo;
 	sysinfo(&sInfo);
