@@ -1,12 +1,17 @@
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
+#ifdef __linux__
+	#include <sys/sysinfo.h>
+#else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
-#else
-	#include <sys/sysinfo.h>
 #endif
 
 char* fetchFreeram(void) {
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
+#ifdef __linux__
+	struct sysinfo sInfo;
+	sysinfo(&sInfo);
+
+	float freeramValue = sInfo.freeram / 1000 / 1000;
+#else
 	int freeram_mib[2];
 	size_t freeram_len;
 	uint64_t freeramUint;
@@ -28,13 +33,7 @@ char* fetchFreeram(void) {
 
 	float freeramValue = freeramUint / 1000 / 1000;
 
-#else
-	struct sysinfo sInfo;
-	sysinfo(&sInfo);
-
-	float freeramValue = sInfo.freeram / 1000 / 1000;
 #endif
-
 	int freeramCSize = snprintf(NULL, 0, "Available Memory: %.1f MB\n", freeramValue) + 1;
 	char *freeram = (char *)malloc(freeramCSize);
 	sprintf(freeram, "Available memory: %.1f MB\n", freeramValue);

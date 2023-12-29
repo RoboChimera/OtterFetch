@@ -1,12 +1,17 @@
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
+#ifdef __linux__
+	#include <sys/sysinfo.h>
+#else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
-#else
-	#include <sys/sysinfo.h>
 #endif
 
 char* fetchUptime(void) {
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
+#ifdef __linux__
+	struct sysinfo sInfo;
+	sysinfo(&sInfo);
+
+	int second = sInfo.uptime;
+#else
 	int uptime_mib[2];
 	size_t uptime_len;
 	struct timeval sinceBootTime;
@@ -21,12 +26,8 @@ char* fetchUptime(void) {
 	}
 
 	int second = time(NULL) - sinceBootTime.tv_sec;
-#else
-	struct sysinfo sInfo;
-	sysinfo(&sInfo);
-
-	int second = sInfo.uptime;
 #endif
+
 	int hour = 0, minute = 0;
 	
 	while (second >= 3600) {
