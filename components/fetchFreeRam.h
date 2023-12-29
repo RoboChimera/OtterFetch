@@ -27,6 +27,11 @@ char* fetchFreeram(void) {
 		kstat_close(kctl);
 	}
 
+	if (kstat_read(kctl, kstat, NULL) == -1) {
+		perror("kstat_read");
+		kstat_close(kctl);
+	}
+
 	kstat_named_t *freeramKname = kstat_data_lookup(kstat, "availrmem");
 	if (freeramKname == NULL) {
 		perror("kstat_data_lookup");
