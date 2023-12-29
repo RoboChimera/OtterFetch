@@ -1,6 +1,7 @@
 #ifdef __linux__
 	#include <sys/sysinfo.h>
 #elif __sun
+	#include <sys/types.h>
 	#include <kstat.h>
 #else
 	#include <sys/types.h>
@@ -39,7 +40,7 @@ char* fetchUptime(void) {
 	}
 
 	uint64_t uptimeUint = uptimeKname->value.i64;
-	int second = uptimeUint;
+	int second = time(NULL) - uptimeUint;
 #else
 	int uptime_mib[2];
 	size_t uptime_len;
