@@ -1,5 +1,7 @@
 #ifdef __linux__
 	#include <sys/sysinfo.h>
+#elif __sun
+	#include <kstat.h>
 #else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
@@ -11,6 +13,28 @@ char* fetchFreeram(void) {
 	sysinfo(&sInfo);
 
 	float freeramValue = sInfo.freeram / 1000 / 1000;
+#elif __sun
+	kstat_ctl_t *kctl;
+	kstat_t *kstat;
+
+	if ((kctl = kstat_open()) == NULL) {
+		perror("kstat_open");
+	}
+
+	kstat = kstat_lookup(kctl, "unix", 0, "system_pages");
+	if (kstat == NULL) {
+		perror("kstat_lookup");
+		kstat_close(kctl);
+	}
+
+	kstat_named_t *freeramKname = kstat_data_lookup(kstat, "availrmem");
+	if (freeramKname == NULL) {
+		perror("kstat_data_lookup");
+		kstat_close(kctl)
+	}
+
+	uint64_t freememUint = freeramKname->value.i64;
+	float freeramValue = freeramUint / 1024;
 #else
 	int freeram_mib[2];
 	size_t freeram_len;
@@ -22,6 +46,7 @@ char* fetchFreeram(void) {
 	freeram_mib[1] = HW_USERMEM64;
 #else
 	freeram_mib[1] = HW_USERMEM;
+	float freeramValue = freeramUint / 1000 / 1000;
 #endif
 
 
