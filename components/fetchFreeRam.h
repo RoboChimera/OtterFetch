@@ -18,12 +18,12 @@ char* fetchFreeram(void) {
 	kstat_t *freeramKstat;
 
 	if ((freeramKctl = kstat_open()) == NULL) {
-		perror("freeramKstat_open");
+		perror("kstat_open");
 	}
 
 	freeramKstat = kstat_lookup(freeramKctl, "unix", 0, "system_pages");
 	if (freeramKstat == NULL) {
-		perror("freeramKstat_lookup");
+		perror("kstat_lookup");
 		kstat_close(freeramKctl);
 	}
 
@@ -34,12 +34,14 @@ char* fetchFreeram(void) {
 
 	kstat_named_t *freeramKname = kstat_data_lookup(freeramKstat, "availrmem");
 	if (freeramKname == NULL) {
-		perror("freeramKstat_data_lookup");
+		perror("kstat_data_lookup");
 		kstat_close(freeramKctl);
 	}
 
 	uint64_t freeramUint = freeramKname->value.i64;
 	float freeramValue = freeramUint / 1024;
+
+	kstat_close(freeramKctl);
 #else
 	int freeram_mib[2];
 	size_t freeram_len;

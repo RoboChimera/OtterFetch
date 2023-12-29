@@ -1,5 +1,7 @@
 #ifdef __linux__
 	#include <sys/sysinfo.h>
+#elif __sun
+	#include <kstat.h>
 #else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
@@ -11,6 +13,33 @@ char* fetchUptime(void) {
 	sysinfo(&sInfo);
 
 	int second = sInfo.uptime;
+#elif __sun
+	kstat_ctl_t *uptimeKctl;
+	kstat_t *uptimeKstat;
+
+	if ((uptimeKctl = kstat_open()) == NULL) {
+		perror("kstat_open");
+	}
+
+	uptimeKstat = kstat_lookup(uptimeKctl, "unix", 0, "system_misc");
+	if (uptimeKstat == NULL) {
+		perror("kstat_lookup");
+		kstat_close(uptimeKctl);
+	}
+
+	if(kstat_read(uptimeKctl, uptimeKstat, NULL) == -1) {
+		perror("kstat_read");
+		kstat_close(uptimeKctl);
+	}
+
+	kstat_named_t *uptimeKname = kstat_data_lookup(uptimeKstat, "boot_time");
+	if (uptimeKname == NULL) {
+		perror("kstat_data_lookup");
+		kstat_close(uptimeKctl);
+	}
+
+	uint64_t uptimeUint = uptimeKname->value.i64;
+	int second = uptimeUint;
 #else
 	int uptime_mib[2];
 	size_t uptime_len;
