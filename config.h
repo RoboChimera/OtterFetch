@@ -1,14 +1,14 @@
 /*
- * function description		function name		library directory/file		notes
+ * function description		function name		library directory/file		notes		OS Compatability
  *
- * OS + Version			fetchUname()		components/fetchUname.h
- * Uptime in Hours,		fetchUptime()		components/fetchUptime.h
+ * OS + Version			fetchUname()		components/fetchUname.h				Should work on most *NIX OSes without issues
+ * Uptime in Hours,		fetchUptime()		components/fetchUptime.h			Works on Linux, *BSD and sunOS (tested on openIndiana, report if not working on others)
  * Minutes and Seconds
  *
- * Total memory in GB		fetchTotalram()		components/fetchTotalRam.h
- * Free memory in GB		fetchFreeram()		components/fetchUname.h
+ * Total memory in GB		fetchTotalram()		components/fetchTotalRam.h			Should work on most *NIX OSes without issues
+ * Free memory in GB		fetchFreeram()		components/fetchUname.h				Works on Linux, *BSD and sunOS (tested on openIndiana, report if not working on others)
  *
- * Available Threads		fetchCpuThreads()	components/fetchCpuThreads.h
+ * Available Threads		fetchCpuThreads()	components/fetchCpuThreads.h			Works on Linux, *BSD
 */
 
 // Include only needed libraries
