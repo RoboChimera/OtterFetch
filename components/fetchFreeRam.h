@@ -30,10 +30,10 @@ char* fetchFreeram(void) {
 	kstat_named_t *freeramKname = kstat_data_lookup(kstat, "availrmem");
 	if (freeramKname == NULL) {
 		perror("kstat_data_lookup");
-		kstat_close(kctl)
+		kstat_close(kctl);
 	}
 
-	uint64_t freememUint = freeramKname->value.i64;
+	uint64_t freeramUint = freeramKname->value.i64;
 	float freeramValue = freeramUint / 1024;
 #else
 	int freeram_mib[2];
