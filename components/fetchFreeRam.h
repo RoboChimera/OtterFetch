@@ -1,7 +1,7 @@
 #ifdef __linux__
 	#include <sys/sysinfo.h>
 #elif __sun
-	#include <kstat.h>
+	#include <freeramKstat.h>
 #else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
@@ -14,28 +14,28 @@ char* fetchFreeram(void) {
 
 	float freeramValue = sInfo.freeram / 1000 / 1000;
 #elif __sun
-	kstat_ctl_t *kctl;
-	kstat_t *kstat;
+	freeramKstat_ctl_t *freeramKctl;
+	freeramKstat_t *freeramKstat;
 
-	if ((kctl = kstat_open()) == NULL) {
-		perror("kstat_open");
+	if ((freeramKctl = freeramKstat_open()) == NULL) {
+		perror("freeramKstat_open");
 	}
 
-	kstat = kstat_lookup(kctl, "unix", 0, "system_pages");
-	if (kstat == NULL) {
-		perror("kstat_lookup");
-		kstat_close(kctl);
+	freeramKstat = freeramKstat_lookup(freeramKctl, "unix", 0, "system_pages");
+	if (freeramKstat == NULL) {
+		perror("freeramKstat_lookup");
+		freeramKstat_close(freeramKctl);
 	}
 
-	if (kstat_read(kctl, kstat, NULL) == -1) {
-		perror("kstat_read");
-		kstat_close(kctl);
+	if (freeramKstat_read(freeramKctl, freeramKstat, NULL) == -1) {
+		perror("freeramKstat_read");
+		freeramKstat_close(freeramKctl);
 	}
 
-	kstat_named_t *freeramKname = kstat_data_lookup(kstat, "availrmem");
+	freeramKstat_named_t *freeramKname = freeramKstat_data_lookup(freeramKstat, "availrmem");
 	if (freeramKname == NULL) {
-		perror("kstat_data_lookup");
-		kstat_close(kctl);
+		perror("freeramKstat_data_lookup");
+		freeramKstat_close(freeramKctl);
 	}
 
 	uint64_t freeramUint = freeramKname->value.i64;
