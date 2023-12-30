@@ -1,6 +1,7 @@
 #ifdef __linux__
 	#include <sys/sysinfo.h>
 #elif __sun
+	#include <kstat.h>
 #else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
@@ -9,6 +10,32 @@
 char* fetchCpuThreads(void) {
 #ifdef __linux__
 	int ncpu = get_nprocs();
+#elif __sun
+	kstat_ctl_t *ncpuKctl;
+	kstat_t *uptimeKstat;
+
+	if ((ncpuKctl = kstat_open()) == NULL) {
+		perror("kstat_open");
+	}
+
+	ncpuKstat = kstat_lookup(uptimeKctl, "unix", 0, "system_misc");
+	if (ncpuKstat == NULL) {
+		perror("kstat_lookup");
+		kstat_close(ncpuKctl);
+	}
+
+	if (kstat_read(ncpuKctl, ncpuKstat, NULL) == -1) {
+		perror("kstat_read");
+		kstat_close(ncpuKctl);
+	}
+
+	kstat_named_t *ncpuKname = kstat_data_lookup(ncpuKstat, "ncpus");
+	if (ncpuKname == NULL) {
+		perror("kstat_data_lookup")
+		kstat_close(ncpuKctl);
+	}
+
+	int ncpu = ncpuKname->value.i;
 #else
 	int cpuThreads_mib[2];
 	size_t cpuThreads_len;

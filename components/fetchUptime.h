@@ -1,7 +1,6 @@
 #ifdef __linux__
 	#include <sys/sysinfo.h>
 #elif __sun
-	#include <sys/types.h>
 	#include <kstat.h>
 #else
 	#include <sys/types.h>
@@ -28,7 +27,7 @@ char* fetchUptime(void) {
 		kstat_close(uptimeKctl);
 	}
 
-	if(kstat_read(uptimeKctl, uptimeKstat, NULL) == -1) {
+	if (kstat_read(uptimeKctl, uptimeKstat, NULL) == -1) {
 		perror("kstat_read");
 		kstat_close(uptimeKctl);
 	}
