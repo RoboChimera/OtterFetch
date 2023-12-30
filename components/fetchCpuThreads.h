@@ -35,7 +35,7 @@ if (ncpuKstat == NULL) {
 		kstat_close(ncpuKctl);
 	}
 
-	int ncpu = ncpuKname->value.i;
+	int ncpu = ncpuKname->value.i64;
 #else
 	int cpuThreads_mib[2];
 	size_t cpuThreads_len;
