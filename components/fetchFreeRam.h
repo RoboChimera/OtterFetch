@@ -53,7 +53,6 @@ char* fetchFreeram(void) {
 	freeram_mib[1] = HW_USERMEM64;
 #else
 	freeram_mib[1] = HW_USERMEM;
-	float freeramValue = freeramUint / 1000 / 1000;
 #endif
 
 
