@@ -8,7 +8,7 @@
  * Total memory in GB		fetchTotalram()		components/fetchTotalRam.h			Should work on most *NIX OSes without issues
  * Free memory in GB		fetchFreeram()		components/fetchUname.h				Works on Linux, *BSD and sunOS (tested on openIndiana, report if not working on others)
  *
- * Available Threads		fetchCpuThreads()	components/fetchCpuThreads.h			Works on Linux, *BSD
+ * Available Threads		fetchCpuThreads()	components/fetchCpuThreads.h			Works on Linux, *BSD and sunOS (tested on openIndiana, report if not working on others)
 */
 
 // Include only needed libraries
