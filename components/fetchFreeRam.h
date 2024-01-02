@@ -44,12 +44,12 @@ char* fetchFreeram(void) {
 	float freeramValue = freeramUint / 1024;
 
 	kstat_close(freeramKctl);
-#elif
+#elif __HAIKU__
 	system_info sInfo;
 	get_system_info(&sInfo);
 
-	uint64_t usedram = sysinfo.used_pages * B_PAGE_SIZE;
-	uint64_t totalram = sysinfo.max_pages * B_PAGE_SIZE;
+	uint64_t usedram = sinfo.used_pages * B_PAGE_SIZE;
+	uint64_t totalram = sinfo.max_pages * B_PAGE_SIZE;
 
 	uint64_t freeramUint = totalram - usedram;
 	float freeramValue = freeramUint / 1024 / 1024;
