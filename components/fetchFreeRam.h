@@ -48,8 +48,8 @@ char* fetchFreeram(void) {
 	system_info sInfo;
 	get_system_info(&sInfo);
 
-	uint64_t usedram = sinfo.used_pages * B_PAGE_SIZE;
-	uint64_t totalram = sinfo.max_pages * B_PAGE_SIZE;
+	uint64_t usedram = sInfo.used_pages * B_PAGE_SIZE;
+	uint64_t totalram = sInfo.max_pages * B_PAGE_SIZE;
 
 	uint64_t freeramUint = totalram - usedram;
 	float freeramValue = freeramUint / 1024 / 1024;
