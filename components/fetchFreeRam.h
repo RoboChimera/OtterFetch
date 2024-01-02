@@ -2,6 +2,8 @@
 	#include <sys/sysinfo.h>
 #elif __sun
 	#include <kstat.h>
+#elif __HAIKU__
+	#include <OS.h>
 #else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
@@ -42,6 +44,15 @@ char* fetchFreeram(void) {
 	float freeramValue = freeramUint / 1024;
 
 	kstat_close(freeramKctl);
+#elif
+	system_info sInfo;
+	get_system_info(&sInfo);
+
+	uint64_t usedram = sysinfo.used_pages * B_PAGE_SIZE;
+	uint64_t totalram = sysinfo.max_pages * B_PAGE_SIZE;
+
+	uint64_t freeramUint = totalram - usedram;
+	float freeramValue = freeramUint / 1024 / 1024;
 #else
 	int freeram_mib[2];
 	size_t freeram_len;
