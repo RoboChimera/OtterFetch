@@ -2,6 +2,8 @@
 	#include <sys/sysinfo.h>
 #elif __sun
 	#include <kstat.h>
+#elif __HAIKU__
+	#include <OS.h>
 #else
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
@@ -36,6 +38,13 @@ if (ncpuKstat == NULL) {
 	}
 
 	int ncpu = ncpuKname->value.i64;
+#elif __HAIKU__
+	system_info sInfo;
+	get_system_info(&sInfo);
+
+	uint32_t ncpuUint = sInfo.cpu_count;
+
+	int ncpu = ncpuUint;
 #else
 	int cpuThreads_mib[2];
 	size_t cpuThreads_len;
